@@ -1,0 +1,42 @@
+# ==============================================================================
+# Production Docker Compose Configuration - RLNS Web Application
+# Configured specifically for Local Intranet & Wi-Fi Access (0.0.0.0:5178 binding)
+# ==============================================================================
+services:
+  rlns-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rlns-app
+    restart: unless-stopped
+    environment:
+      - PORT=5178
+      - HOST=0.0.0.0
+      - NODE_ENV=production
+      - ESTATE_BILLS_DIR=/app/uploads
+      - ORACLE_CONNECT_STR=${ORACLE_CONNECT_STR:-(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.2.53.55)(PORT=1521)))(CONNECT_DATA=(SID=DB10G)))}
+      - ORACLE_USER=${ORACLE_USER:-PAYTEMP}
+      - ORACLE_PASSWORD=${ORACLE_PASSWORD:-paytemp}
+    volumes:
+      # Persistent SQLite database storage (anchored to D:/RLNS/data so Jenkins builds never lose DB data)
+      - ${RLNS_DATA_DIR:-D:/RLNS/data}:/app/data
+      # Uploaded bill storage and PDF outputs
+      - ${RLNS_UPLOADS_DIR:-D:/RLNS/uploads}:/app/uploads
+    extra_hosts:
+      # Allows container to reach host Windows services (such as host_bridge on port 3005)
+      - "host.docker.internal:host-gateway"
+    ports:
+      # Explicit 0.0.0.0 binding allows any computer or phone on local Wi-Fi/intranet to connect
+      - "0.0.0.0:5178:5178"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:5178/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - rlns-network
+
+networks:
+  rlns-network:
+    driver: bridge

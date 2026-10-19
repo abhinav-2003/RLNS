@@ -1,0 +1,62 @@
+[
+  {
+    "page": 1,
+    "partyCode": "PRT-1001",
+    "partyName": "",
+    "unitNumber": "Shop-1",
+    "amount": 45000,
+    "filename": "Page_0001_PRT-1001.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\final_split_output\\Page_0001_PRT-1001.pdf",
+    "fileSize": 1151,
+    "rawText": "RENT PAYMENT RECEIPT / BILL Party Code: PRT-1001 Party Name: Sharma Enterprises Unit / Flat: Shop-1 Rent Amount: Rs. 45,000 Payment Status: Confirmed & Paid",
+    "status": "FOUND"
+  },
+  {
+    "page": 2,
+    "partyCode": "PRT-1002",
+    "partyName": "",
+    "unitNumber": "A-201",
+    "amount": 32000,
+    "filename": "Page_0002_PRT-1002.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\final_split_output\\Page_0002_PRT-1002.pdf",
+    "fileSize": 1143,
+    "rawText": "RENT PAYMENT RECEIPT / BILL Party Code: PRT-1002 Party Name: Diya Traders Unit / Flat: A-201 Rent Amount: Rs. 32,000 Payment Status: Confirmed & Paid",
+    "status": "FOUND"
+  },
+  {
+    "page": 3,
+    "partyCode": "KIR-8492",
+    "partyName": "",
+    "unitNumber": "B-304",
+    "amount": 28500,
+    "filename": "Page_0003_KIR-8492.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\final_split_output\\Page_0003_KIR-8492.pdf",
+    "fileSize": 1142,
+    "rawText": "RENT PAYMENT RECEIPT / BILL Party Code: KIR-8492 Party Name: Rohan Verma Unit / Flat: B-304 Rent Amount: Rs. 28,500 Payment Status: Confirmed & Paid",
+    "status": "FOUND"
+  },
+  {
+    "page": 4,
+    "partyCode": "TNT-5501",
+    "partyName": "",
+    "unitNumber": "C-102",
+    "amount": 35000,
+    "filename": "Page_0004_TNT-5501.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\final_split_output\\Page_0004_TNT-5501.pdf",
+    "fileSize": 1140,
+    "rawText": "RENT PAYMENT RECEIPT / BILL Party Code: TNT-5501 Party Name: Priya Iyer Unit / Flat: C-102 Rent Amount: Rs. 35,000 Payment Status: Confirmed & Paid",
+    "status": "FOUND"
+  },
+  {
+    "page": 5,
+    "partyCode": "CUST-9921",
+    "partyName": "",
+    "unitNumber": "D-501",
+    "amount": 52000,
+    "filename": "Page_0005_CUST-9921.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\final_split_output\\Page_0005_CUST-9921.pdf",
+    "fileSize": 1147,
+    "rawText": "RENT PAYMENT RECEIPT / BILL Party Code: CUST-9921 Party Name: Vikram Malhotra Unit / Flat: D-501 Rent Amount: Rs. 52,000 Payment Status: Confirmed & Paid",
+    "status": "FOUND"
+  }
+]

@@ -1,0 +1,57 @@
+[
+  {
+    "page": 1,
+    "partyCode": "UNKNOWN_PARTY",
+    "partyName": "",
+    "unitNumber": "",
+    "amount": 0,
+    "filename": "Page_0001_UNKNOWN_PARTY.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\test_split_output\\Page_0001_UNKNOWN_PARTY.pdf",
+    "fileSize": 1151,
+    "status": "MISSING_CODE"
+  },
+  {
+    "page": 2,
+    "partyCode": "PRT-1002",
+    "partyName": "Diya Traders",
+    "unitNumber": "/",
+    "amount": 32000,
+    "filename": "Page_0002_PRT-1002.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\test_split_output\\Page_0002_PRT-1002.pdf",
+    "fileSize": 1143,
+    "status": "FOUND"
+  },
+  {
+    "page": 3,
+    "partyCode": "UNKNOWN_PARTY",
+    "partyName": "",
+    "unitNumber": "",
+    "amount": 0,
+    "filename": "Page_0003_UNKNOWN_PARTY.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\test_split_output\\Page_0003_UNKNOWN_PARTY.pdf",
+    "fileSize": 1142,
+    "status": "MISSING_CODE"
+  },
+  {
+    "page": 4,
+    "partyCode": "UNKNOWN_PARTY",
+    "partyName": "",
+    "unitNumber": "",
+    "amount": 0,
+    "filename": "Page_0004_UNKNOWN_PARTY.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\test_split_output\\Page_0004_UNKNOWN_PARTY.pdf",
+    "fileSize": 1140,
+    "status": "MISSING_CODE"
+  },
+  {
+    "page": 5,
+    "partyCode": "CUST-9921",
+    "partyName": "Vikram Malhotra",
+    "unitNumber": "/",
+    "amount": 52000,
+    "filename": "Page_0005_CUST-9921.pdf",
+    "filePath": "C:\\Users\\Administrator\\Desktop\\RLNS\\test_split_output\\Page_0005_CUST-9921.pdf",
+    "fileSize": 1148,
+    "status": "FOUND"
+  }
+]

@@ -1,0 +1,6 @@
+Page,PartyCode,PartyName,UnitNumber,Amount,Filename,Status
+1,"UNKNOWN_PARTY","","",0,"Page_0001_UNKNOWN_PARTY.pdf",MISSING_CODE
+2,"PRT-1002","Diya Traders","/",32000,"Page_0002_PRT-1002.pdf",FOUND
+3,"UNKNOWN_PARTY","","",0,"Page_0003_UNKNOWN_PARTY.pdf",MISSING_CODE
+4,"UNKNOWN_PARTY","","",0,"Page_0004_UNKNOWN_PARTY.pdf",MISSING_CODE
+5,"CUST-9921","Vikram Malhotra","/",52000,"Page_0005_CUST-9921.pdf",FOUND

@@ -1,0 +1,12 @@
+node_modules
+.git
+.gitignore
+.vscode
+.gemini
+scratch
+test_*
+demo_output
+final_split_output
+data
+uploads
+*.log

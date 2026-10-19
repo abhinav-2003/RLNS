@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>National Fertilizers Limited - Lease Billing Application</title>
+  <link rel="icon" type="image/png" href="nfl_logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=2.5">
+</head>
+
+<body class="theme-light">
+  <div class="app-container">
+    <!-- TOP NAVIGATION / HEADER -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-logo">
+          <img src="nfl_logo.png" alt="NFL Logo" class="brand-logo-img">
+          <div class="logo-text">
+            <h1>Lease Billing Application <span class="badge badge-accent">NFL</span></h1>
+            <p class="tagline">National Fertilizers Limited • Rent Receipt Automation & Dispatch</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav-tabs">
+        <button class="nav-btn active" data-tab="tab-upload" id="nav-upload-btn">
+          <span class="nav-icon">📤</span> Bulk Upload & Overview
+        </button>
+        <button class="nav-btn" data-tab="tab-receipts" id="nav-receipts-btn">
+          <span class="nav-icon">📑</span> Receipts Catalog (<span id="tab-receipt-count">0</span>)
+        </button>
+        <button class="nav-btn" data-tab="tab-tenants" id="nav-tenants-btn">
+          <span class="nav-icon">👥</span> Tenant Database (<span id="tab-tenant-count">0</span>)
+        </button>
+        <button class="nav-btn" data-tab="tab-dispatch" id="nav-dispatch-btn">
+          <span class="nav-icon">🚀</span> Dispatch Center
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <div class="user-profile-badge" id="user-profile-badge" style="display: none;">
+          <span class="user-role-icon" id="user-role-icon">👤</span>
+          <div class="user-info">
+            <span class="user-name" id="user-display-name">Admin</span>
+            <span class="user-role" id="user-display-role">System Administrator</span>
+          </div>
+          <button class="btn btn-outline btn-xs" id="btn-logout" title="Sign out of Lease Billing Application">
+            🚪 Logout
+          </button>
+        </div>
+        <button class="btn btn-secondary btn-icon" id="open-settings-btn" title="SMTP & Email Settings">
+          ⚙️ Settings
+        </button>
+        <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Theme">
+          ☀️
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN VIEW AREA -->
+    <main class="app-main">
+
+      <!-- ==================================================== -->
+      <!-- TAB 1: BULK UPLOAD & OVERVIEW -->
+      <!-- ==================================================== -->
+      <section class="tab-pane active" id="tab-upload">
+        <!-- METRICS ROW -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon icon-blue">📑</div>
+            <div class="metric-info">
+              <span class="metric-label">Total Receipts</span>
+              <h2 class="metric-value" id="stat-total-receipts">0</h2>
+              <span class="metric-sub">Uploaded PDFs</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon icon-emerald">🔗</div>
+            <div class="metric-info">
+              <span class="metric-label">Matched to Tenants</span>
+              <h2 class="metric-value" id="stat-matched-receipts">0</h2>
+              <span class="metric-sub text-emerald"><span id="stat-match-rate">0%</span> match rate</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon icon-amber">⏳</div>
+            <div class="metric-info">
+              <span class="metric-label">Pending Dispatch</span>
+              <h2 class="metric-value" id="stat-pending-receipts">0</h2>
+              <span class="metric-sub text-amber">Ready to send</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon icon-purple">📨</div>
+            <div class="metric-info">
+              <span class="metric-label">Emails Delivered</span>
+              <h2 class="metric-value" id="stat-sent-receipts">0</h2>
+              <span class="metric-sub text-purple"><span id="stat-failed-receipts">0</span> failed</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon icon-cyan">👥</div>
+            <div class="metric-info">
+              <span class="metric-label">Tenant Database</span>
+              <h2 class="metric-value" id="stat-total-tenants">0</h2>
+              <span class="metric-sub">Registered emails</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- UPLOAD SECTION -->
+        <div class="panel-card upload-container">
+          <div class="panel-header">
+            <div>
+              <h3>PDF Ingestion & Splitting Engine</h3>
+              <p class="subtext">Upload either a <strong>single master PDF (~1,500 pages)</strong> to split
+                page-by-page, or drop multiple individual PDF receipt files.</p>
+            </div>
+          </div>
+
+          <!-- UPLOAD TYPE SWITCHER -->
+          <div class="filter-pills mb-3" style="width: fit-content;">
+            <button class="pill active" id="upload-mode-master-btn">📄 Single Master PDF (~1500 Pages)</button>
+            <button class="pill" id="upload-mode-individual-btn">📂 Bulk Individual PDFs</button>
+          </div>
+
+          <!-- DROPZONE 1: SINGLE MASTER MULTI-PAGE PDF -->
+          <div class="drop-zone" id="master-drop-zone">
+            <input type="file" id="master-pdf-file-input" accept="application/pdf" class="file-input-hidden">
+            <div class="drop-zone-content">
+              <div class="drop-illustration">📑</div>
+              <h4>Drop 1 Single Master PDF File Here</h4>
+              <p>Upload your master PDF (up to ~1,500 pages). Lease Billing Application will split each page into a
+                separate receipt and extract the <strong>Party Code</strong>.</p>
+              <div class="drop-zone-buttons">
+                <button class="btn btn-primary" onclick="document.getElementById('master-pdf-file-input').click()">
+                  Select Master PDF File
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- DROPZONE 2: INDIVIDUAL MULTIPLE PDFS -->
+          <div class="drop-zone" id="drop-zone" style="display: none;">
+            <input type="file" id="pdf-file-input" multiple accept="application/pdf" class="file-input-hidden">
+            <div class="drop-zone-content">
+              <div class="drop-illustration">📂</div>
+              <h4>Drag & Drop Individual Rent Receipt PDFs Here</h4>
+              <p>Supports bulk selection (1 to 1,500+ separate PDF files).</p>
+              <div class="drop-zone-buttons">
+                <button class="btn btn-primary" onclick="document.getElementById('pdf-file-input').click()">
+                  Browse PDF Files
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- UPLOAD PROGRESS (VISIBLE DURING BATCH UPLOAD) -->
+          <div class="upload-progress-box" id="upload-progress-box" style="display: none;">
+            <div class="progress-info">
+              <span class="progress-title" id="upload-progress-text">Uploading files...</span>
+              <span class="progress-percent" id="upload-progress-percent">0%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="upload-progress-fill" style="width: 0%;"></div>
+            </div>
+            <p class="progress-sub" id="upload-progress-sub">Processing files in background chunks to prevent browser
+              freezing...</p>
+          </div>
+        </div>
+
+        <!-- QUICK WORKFLOW GUIDE -->
+        <div class="workflow-steps-grid">
+          <div class="workflow-step">
+            <div class="step-badge">Step 1</div>
+            <h4>Upload Receipts</h4>
+            <p>Upload all PDF receipts in one batch. Lease Billing Application parses text, amounts, units, and dates
+              asynchronously.</p>
+          </div>
+          <div class="workflow-step">
+            <div class="step-badge">Step 2</div>
+            <h4>Connect Tenant DB</h4>
+            <p>Direct live connection with central Oracle Database (10.2.53.55) or Excel/CSV. Lease Billing Application intelligently links PDFs
+              to respective emails.</p>
+          </div>
+          <div class="workflow-step">
+            <div class="step-badge">Step 3</div>
+            <h4>Review & Remap</h4>
+            <p>Inspect matched and unmatched PDFs. Use side-by-side preview or one-click manual overrides if needed.</p>
+          </div>
+          <div class="workflow-step">
+            <div class="step-badge">Step 4</div>
+            <h4>Bulk Dispatch</h4>
+            <p>Trigger rate-limited automated email delivery. Track live delivery receipts with audit logs.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================== -->
+      <!-- TAB 2: RECEIPTS CATALOG (INDIVIDUAL PDF VIEW) -->
+      <!-- ==================================================== -->
+      <section class="tab-pane" id="tab-receipts">
+        <div class="panel-card">
+          <div class="panel-header flex-wrap">
+            <div class="title-with-badge">
+              <h3>All Uploaded Receipts</h3>
+              <span class="badge badge-info" id="receipts-badge-total">0 PDFs</span>
+            </div>
+
+            <div class="filter-controls">
+              <!-- Search Input -->
+              <div class="search-box">
+                <input type="text" id="receipt-search-input" placeholder="Search by flat, tenant, filename..."
+                  class="form-input">
+                <button class="search-clear-btn" id="search-clear-btn" style="display:none;">✕</button>
+              </div>
+
+              <!-- Filter Pills -->
+              <div class="filter-pills">
+                <button class="pill active" data-filter="all">All</button>
+                <button class="pill" data-filter="matched">Matched (100%)</button>
+                <button class="pill" data-filter="unmatched">Unmatched</button>
+                <button class="pill" data-filter="pending">Pending Send</button>
+                <button class="pill" data-filter="sent">Sent</button>
+                <button class="pill" data-filter="failed">Failed</button>
+              </div>
+
+              <!-- View Toggle -->
+              <div class="view-toggle-group">
+                <button class="view-toggle-btn active" id="view-individual-btn" title="Individual view">
+                  📋 Individual
+                </button>
+                <button class="view-toggle-btn" id="view-grouped-btn" title="Grouped by Party Code (clubbed docs)">
+                  📦 Grouped
+                </button>
+              </div>
+
+              <!-- Actions -->
+              <button class="btn btn-outline btn-sm" id="btn-select-all-page" onclick="selectAllOnCurrentPage()"
+                title="Select all receipts on current page">
+                ☑️ Select All
+              </button>
+              <button class="btn btn-outline btn-sm" id="btn-deselect-all" onclick="deselectAllReceipts()"
+                style="display: none;" title="Deselect all">
+                ◻️ Deselect All
+              </button>
+              <button class="btn btn-primary btn-sm" id="btn-bulk-send-selected" style="display: none;"
+                onclick="sendSelectedReceipts()" title="Send emails to selected recipients">
+                🚀 Send Selected (<span id="selected-count">0</span>)
+              </button>
+              <button class="btn btn-danger btn-sm" id="btn-bulk-delete-selected" style="display: none;"
+                onclick="deleteSelectedReceipts()" title="Delete selected receipts">
+                🗑️ Delete Selected (<span id="delete-selected-count">0</span>)
+              </button>
+              <button class="btn btn-success btn-sm" id="btn-bulk-send-all"
+                title="Send all pending matched receipts in bulk">
+                🚀 Send All Matched
+              </button>
+              <button class="btn btn-outline btn-sm" id="btn-edit-mail-template" onclick="openEmailTemplateModal()"
+                title="Edit outgoing email subject and body template">
+                ✉️ Edit Mail Template
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btn-rematch-all" title="Re-run matching algorithm">
+                🔄 Re-Match All
+              </button>
+              <button class="btn btn-danger btn-sm" id="btn-clear-receipts" onclick="clearAllReceipts()"
+                title="Clear all receipts">
+                🗑️ Clear All
+              </button>
+            </div>
+          </div>
+
+          <!-- INDIVIDUAL VIEW (original table) -->
+          <div id="individual-view">
+            <div class="table-responsive">
+              <table class="data-table" id="receipts-table">
+                <thead>
+                  <tr>
+                    <th style="width: 38px; text-align: center;"><input type="checkbox" id="receipts-select-all"
+                        title="Select / Deselect all on this page"></th>
+                    <th style="width: 45px;">#</th>
+                    <th>Receipt PDF</th>
+                    <th>Party Code</th>
+                    <th>Detected Metadata</th>
+                    <th>Matched Tenant & Email</th>
+                    <th>Match Confidence</th>
+                    <th>Email Status</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="receipts-table-body">
+                  <tr>
+                    <td colspan="8" class="text-center py-5">
+                      <div class="empty-state">
+                        <span class="empty-icon">📂</span>
+                        <p>No receipts uploaded yet. Go to <strong>Bulk Upload</strong> to add your PDFs.</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- GROUPED VIEW (clubbed by party code) -->
+          <div id="grouped-view" style="display:none;">
+            <div class="grouped-header-info">
+              <span class="badge badge-info" id="grouped-badge-count">0 Groups</span>
+              <span class="text-muted text-xs" id="grouped-badge-receipts">0 total receipts</span>
+            </div>
+            <div id="grouped-cards-container">
+              <div class="empty-state" style="padding: 3rem;">
+                <span class="empty-icon">📦</span>
+                <p>Switch to <strong>Grouped View</strong> to see receipts clubbed by Party Code.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- PAGINATION -->
+          <div class="pagination-footer">
+            <span class="pagination-info" id="receipts-pagination-info">Showing 0-0 of 0</span>
+            <div class="pagination-buttons" id="receipts-pagination-btns">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================== -->
+      <!-- TAB 3: TENANT DATABASE TABLE -->
+      <!-- ==================================================== -->
+      <section class="tab-pane" id="tab-tenants">
+        <div class="panel-card">
+          <div class="panel-header flex-wrap">
+            <div>
+              <h3>Tenant Database & Email Registry</h3>
+              <p class="subtext">Every tenant is mapped with flat/unit number, email address, and monthly rent records.
+              </p>
+            </div>
+
+            <div class="table-toolbar">
+              <input type="text" id="tenant-search-input" placeholder="Search party code, name, flat, email..."
+                class="form-input">
+              <button class="btn btn-primary btn-sm" id="btn-add-tenant">
+                ➕ Add Tenant
+              </button>
+              <button class="btn btn-outline btn-sm" id="btn-export-tenants"
+                title="Download entire tenant database as an Excel (.xlsx) file">
+                📥 Export Excel (.xlsx)
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btn-import-tenants"
+                title="Import tenant list from CSV / Excel file">
+                📤 Import Excel / CSV
+              </button>
+              <button class="btn btn-success btn-sm" id="btn-open-oracle-modal"
+                title="Insert customer directly into Oracle table LEASED_CUSTOMERS_DTLS">
+                🏛️ + Add to LEASED_CUSTOMERS_DTLS
+              </button>
+              <button class="btn btn-warning btn-sm" id="btn-sync-oracle"
+                title="Sync real customer emails directly from Oracle PAYTEMP.LEASED_CUSTOMERS_DTLS">
+                🔄 Sync Oracle DB
+              </button>
+              <button class="btn btn-danger btn-sm" id="btn-clear-tenants" disabled
+                title="Clearing tenant database is disabled to prevent accidental data loss"
+                style="opacity: 0.45; cursor: not-allowed;">
+                🗑️ Clear DB (Disabled)
+              </button>
+            </div>
+          </div>
+
+          <!-- TENANT REGISTRY METRICS & FILTER BAR -->
+          <div class="tenant-metrics-bar" style="display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: 1rem 0 1.25rem; background: var(--bg-hover, rgba(0,0,0,0.03)); padding: 0.85rem 1.25rem; border-radius: 8px; border: 1px solid var(--border-color, #e2e8f0);">
+            <div style="display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap;">
+              <div class="metric-item">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block;">🏛️ Total DB Entries</span>
+                <div style="font-size: 1.25rem; font-weight: 700;" id="tenant-stat-total">0</div>
+              </div>
+              <div class="metric-item">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: #ef4444; font-weight: 600; display: block;">⚠️ Duplicates</span>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #ef4444;" id="tenant-stat-duplicates">0</div>
+              </div>
+              <div class="metric-item">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: #8b5cf6; font-weight: 600; display: block;">🚨 Discrepancies</span>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #8b5cf6;" id="tenant-stat-discrepancies">0</div>
+              </div>
+              <div class="metric-item">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: #10b981; font-weight: 600; display: block;">🟢 With Email</span>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #10b981;" id="tenant-stat-with-email">0</div>
+              </div>
+              <div class="metric-item">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: #f59e0b; font-weight: 600; display: block;">🟡 Missing Email</span>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #f59e0b;" id="tenant-stat-no-email">0</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+              <div class="btn-group" id="tenant-filter-btn-group" style="display: flex; gap: 4px; flex-wrap: wrap;">
+                <button class="btn btn-sm btn-outline active" data-filter="all" id="btn-filter-all">All Entries (<span id="count-filter-all">0</span>)</button>
+                <button class="btn btn-sm btn-outline" data-filter="duplicates" id="btn-filter-duplicates" style="color: #ef4444;">⚠️ Duplicates (<span id="count-filter-duplicates">0</span>)</button>
+                <button class="btn btn-sm btn-outline" data-filter="discrepancies" id="btn-filter-discrepancies" style="color: #8b5cf6;">🚨 Discrepancies (<span id="count-filter-discrepancies">0</span>)</button>
+                <button class="btn btn-sm btn-outline" data-filter="with_email" id="btn-filter-with-email" style="color: #10b981;">🟢 With Email (<span id="count-filter-with-email">0</span>)</button>
+                <button class="btn btn-sm btn-outline" data-filter="missing_email" id="btn-filter-missing-email" style="color: #f59e0b;">🟡 Missing Email (<span id="count-filter-missing-email">0</span>)</button>
+              </div>
+              <div class="text-xs text-muted" id="tenant-last-sync-badge" title="Auto-synchronized from Oracle LEASED_CUSTOMERS_DTLS" style="display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.04); padding: 4px 8px; border-radius: 4px; white-space: nowrap;">
+                📡 <span>Last Synced:</span> <strong id="tenant-last-sync-time">Just now</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="tenants-table">
+              <thead>
+                <tr>
+                  <th style="width: 45px;">#</th>
+                  <th>Party Code / ID</th>
+                  <th>Tenant Name</th>
+                  <th>Unit / Flat No</th>
+                  <th>Email Address</th>
+                  <th>Phone Number</th>
+                  <th>Status & Discrepancies</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tenants-table-body">
+                <tr>
+                  <td colspan="8" class="text-center py-5">
+                    <div class="empty-state">
+                      <span class="empty-icon">👥</span>
+                      <p>No tenant records found. Import your CSV/Excel spreadsheet or click <strong>+ Add New
+                          Tenant</strong>.</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================== -->
+      <!-- TAB 4: EMAIL DISPATCH CENTER -->
+      <!-- ==================================================== -->
+      <section class="tab-pane" id="tab-dispatch">
+        <div class="dispatch-grid">
+          <!-- LEFT: DISPATCH CONTROLS & STATUS -->
+          <div class="panel-card dispatch-control-panel">
+            <div class="panel-header">
+              <h3>Bulk Email Dispatch Controller</h3>
+              <div id="simulation-badge-container">
+                <!-- Simulation Badge -->
+              </div>
+            </div>
+
+            <div class="dispatch-summary-box">
+              <div class="summary-metric">
+                <span class="label">Ready to Send</span>
+                <span class="val text-emerald" id="dispatch-ready-count">0</span>
+              </div>
+              <div class="summary-metric">
+                <span class="label">Dispatched</span>
+                <span class="val text-purple" id="dispatch-sent-count">0</span>
+              </div>
+              <div class="summary-metric">
+                <span class="label">Failed</span>
+                <span class="val text-rose" id="dispatch-failed-count">0</span>
+              </div>
+            </div>
+
+            <!-- LIVE CAMPAIGN PROGRESS -->
+            <div class="campaign-progress-card" id="campaign-progress-card">
+              <div class="progress-info">
+                <span class="progress-title" id="dispatch-status-title">Dispatch Engine Idle</span>
+                <span class="progress-percent" id="dispatch-progress-percent">0%</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill fill-purple" id="dispatch-progress-fill" style="width: 0%;"></div>
+              </div>
+              <p class="current-item-text" id="dispatch-current-item">Ready to initiate dispatch queue.</p>
+            </div>
+
+            <!-- TEMPLATE PREVIEW & QUICK EDIT -->
+            <div class="dispatch-template-card" style="background: rgba(0,0,0,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px 16px; margin: 18px 0 16px;">
+              <div class="d-flex justify-between align-center" style="margin-bottom: 8px;">
+                <div class="d-flex align-center gap-2">
+                  <span style="font-size: 1.1rem;">✉️</span>
+                  <strong style="font-size: 0.9rem;">Outgoing Email Template</strong>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="openEmailTemplateModal()" title="Edit email subject and message body">
+                  ✏️ Edit Mail Text
+                </button>
+              </div>
+              <div style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 4px;">
+                Subject: <strong id="dispatch-preview-subject" style="color: var(--text-primary); font-family: inherit;">Monthly Lease Rent Invoice - {{month}} (Unit: {{unit_number}})</strong>
+              </div>
+              <div id="dispatch-preview-snippet" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                Please find your official monthly invoice attached...
+              </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="dispatch-actions">
+              <button class="btn btn-primary btn-lg" id="btn-start-dispatch">
+                🚀 Start Bulk Email Dispatch
+              </button>
+              <button class="btn btn-warning" id="btn-pause-dispatch" style="display: none;">
+                ⏸️ Pause
+              </button>
+              <button class="btn btn-primary" id="btn-resume-dispatch" style="display: none;">
+                ▶️ Resume
+              </button>
+              <button class="btn btn-danger" id="btn-stop-dispatch" style="display: none;">
+                ⏹️ Stop
+              </button>
+            </div>
+
+            <div class="dispatch-tips">
+              <h5>🛡️ Safeguards & Rate Limiting</h5>
+              <ul>
+                <li><strong>Anti-Spam Throttling:</strong> Sends with a controlled delay (configured in Settings) to
+                  avoid getting blocked by mail providers.</li>
+                <li><strong>Attachment Assurance:</strong> Every email attaches the verified rent payment PDF for that
+                  specific tenant.</li>
+                <li><strong>Safe Testing:</strong> When Simulation Mode is ON, full dispatch is executed and logged
+                  without sending actual emails.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- RIGHT: LIVE AUDIT & DELIVERY TERMINAL -->
+          <div class="panel-card dispatch-terminal-panel">
+            <div class="panel-header">
+              <div class="title-with-badge">
+                <h3>Live Delivery Audit Log</h3>
+                <span class="badge badge-pulse" id="live-indicator">LIVE STREAM</span>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btn-clear-logs">Clear Logs</button>
+            </div>
+
+            <div class="terminal-container" id="terminal-feed">
+              <div class="terminal-line text-muted">
+                <span class="time">[System]</span> Dispatch monitor connected and listening for events...
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- MODALS -->
+  <!-- ==================================================== -->
+
+  <!-- PDF VIEWER MODAL -->
+  <div class="modal-overlay" id="pdf-viewer-modal">
+    <div class="modal-content modal-xl">
+      <div class="modal-header">
+        <h4 id="pdf-modal-title">Receipt Preview</h4>
+        <button class="modal-close-btn" onclick="closeModal('pdf-viewer-modal')">✕</button>
+      </div>
+      <div class="modal-body p-0" style="height: 75vh;">
+        <iframe id="pdf-modal-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+      <div class="modal-footer">
+        <a id="pdf-modal-download" href="" target="_blank" class="btn btn-secondary">Open in New Tab</a>
+        <button class="btn btn-primary" onclick="closeModal('pdf-viewer-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REMATCH / LINK TENANT MODAL -->
+  <div class="modal-overlay" id="rematch-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Link Receipt to Tenant</h4>
+        <button class="modal-close-btn" onclick="closeModal('rematch-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-sm text-muted mb-3">Receipt: <strong id="rematch-receipt-filename"></strong></p>
+        <div class="form-group">
+          <label>Select Tenant from Database</label>
+          <select id="rematch-tenant-select" class="form-input">
+            <option value="">-- Choose Tenant --</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btn-rematch-unlink">Unlink Receipt</button>
+        <button class="btn btn-primary" id="btn-rematch-save">Save Mapping</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT TENANT MODAL -->
+  <div class="modal-overlay" id="tenant-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="tenant-modal-title">Add New Tenant</h4>
+        <button class="modal-close-btn" onclick="closeModal('tenant-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="tenant-form-id">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tenant Code / ID</label>
+            <input type="text" id="tenant-form-code" class="form-input" placeholder="e.g. TNT-101">
+          </div>
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="tenant-form-name" class="form-input" placeholder="e.g. Rahul Sharma" required>
+          </div>
+          <div class="form-group">
+            <label>Unit / Flat Number *</label>
+            <input type="text" id="tenant-form-unit" class="form-input" placeholder="e.g. A-102" required>
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="tenant-form-email" class="form-input" placeholder="e.g. tenant@example.com"
+              required>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" id="tenant-form-phone" class="form-input" placeholder="+91 9876543210">
+          </div>
+          <div class="form-group">
+            <label>Monthly Rent (₹)</label>
+            <input type="number" id="tenant-form-rent" class="form-input" placeholder="25000">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('tenant-modal')">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-tenant">Save Tenant</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT TENANTS MODAL -->
+  <div class="modal-overlay" id="import-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Import Tenants (Excel / CSV)</h4>
+        <button class="modal-close-btn" onclick="closeModal('import-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-sm text-muted mb-2">Upload your tenant roster spreadsheet (.xlsx, .xls, or .csv). Column headers
+          like <code>Name</code>, <code>Unit</code>, <code>Email</code>, <code>Phone</code>, <code>Rent</code> will be
+          auto-detected.</p>
+        <div class="d-flex justify-between align-center mb-3">
+          <span class="text-xs text-muted">Need the standard column layout?</span>
+          <button type="button" class="btn btn-outline btn-xs" id="btn-download-import-template">📥 Download Sample Template</button>
+        </div>
+        <div class="drop-zone drop-zone-sm" id="import-drop-zone">
+          <input type="file" id="import-file-input"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            class="file-input-hidden">
+          <div class="drop-zone-content">
+            <div class="drop-illustration" style="font-size: 2.2rem;">📊</div>
+            <p>Click to choose .xlsx or .csv spreadsheet</p>
+            <span class="file-selected-name" id="import-file-selected-name">No file selected</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('import-modal')">Cancel</button>
+        <button class="btn btn-primary" id="btn-submit-import">Import Tenants</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORACLE LEASED CUSTOMER DATA ENTRY MODAL -->
+  <div class="modal-overlay" id="oracle-customer-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>🏛️ Add Customer to LEASED_CUSTOMERS_DTLS</h4>
+        <button class="modal-close-btn" onclick="closeModal('oracle-customer-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div
+          style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.85rem;">
+          📡 <strong>Target Table:</strong> <code>LEASED_CUSTOMERS_DTLS</code> on Oracle DB
+          (<code>10.2.53.55:1521</code>)<br>
+          <span class="text-muted">Data entered here is inserted directly into the Oracle database and synced for exact
+            receipt matching.</span>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Party Code * <span class="text-muted text-xs">(VARCHAR2 20)</span></label>
+            <input type="text" id="oracle-form-party-code" class="form-input" placeholder="e.g. 1210001999" required
+              maxlength="20" style="font-family: var(--font-mono); font-weight: 600;">
+          </div>
+          <div class="form-group">
+            <label>Party Name <span class="text-muted text-xs">(VARCHAR2 100)</span></label>
+            <input type="text" id="oracle-form-party-name" class="form-input" placeholder="e.g. Rajesh Kumar"
+              maxlength="100">
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Email Address <span class="text-muted text-xs">(VARCHAR2 55 - Optional)</span></label>
+            <input type="email" id="oracle-form-email" class="form-input" placeholder="e.g. customer@gmail.com (Optional)"
+              maxlength="55">
+          </div>
+          <div class="form-group">
+            <label>Unit / Flat Number <span class="text-muted text-xs">(VARCHAR2 100)</span></label>
+            <input type="text" id="oracle-form-unit-number" class="form-input" placeholder="e.g. QTR. 2 003/TYPE-III"
+              maxlength="100">
+          </div>
+          <div class="form-group">
+            <label>Phone Number <span class="text-muted text-xs">(VARCHAR2 50)</span></label>
+            <input type="text" id="oracle-form-phone" class="form-input" placeholder="e.g. 9876543210"
+              maxlength="50">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('oracle-customer-modal')">Cancel</button>
+        <button class="btn btn-success" id="btn-save-oracle-customer">💾 Save to LEASED_CUSTOMERS_DTLS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS & SMTP MODAL -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h4>System & Dispatch Settings</h4>
+        <button class="modal-close-btn" onclick="closeModal('settings-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- SIMULATION MODE TOGGLE BANNER -->
+        <div class="setting-banner">
+          <div>
+            <strong>Simulation Mode</strong>
+            <p class="text-sm text-muted">Test bulk dispatch safely without sending actual emails to tenants.</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="setting-simulation-mode">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="smtp-help-banner">
+          💡 <strong>Gmail / Google Workspace Tip:</strong> Use your full Gmail address as Username and a 16-character
+          <strong>App Password</strong> (from Google Account &gt; Security &gt; 2-Step Verification &gt; App passwords)
+          instead of your regular password.
+        </div>
+
+        <h5 class="section-title">SMTP Server Configuration</h5>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>SMTP Host</label>
+            <input type="text" id="setting-smtp-host" class="form-input" placeholder="smtp.gmail.com">
+          </div>
+          <div class="form-group">
+            <label>SMTP Port</label>
+            <input type="number" id="setting-smtp-port" class="form-input" placeholder="587">
+          </div>
+          <div class="form-group" style="display: flex; align-items: center; gap: 10px; padding-top: 8px;">
+            <label class="toggle-switch" style="margin: 0;">
+              <input type="checkbox" id="setting-smtp-secure">
+              <span class="slider"></span>
+            </label>
+            <div>
+              <strong style="font-size: 0.85rem;">SSL/TLS (Secure)</strong>
+              <p class="text-xs text-muted" style="margin: 2px 0 0;">Enable for port 465. Auto-detected when port
+                changes.</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Sender Name</label>
+            <input type="text" id="setting-smtp-from-name" class="form-input" placeholder="Lease Billing Application">
+          </div>
+          <div class="form-group">
+            <label>Sender Email (From)</label>
+            <input type="email" id="setting-smtp-from-email" class="form-input" placeholder="billing@yourdomain.com">
+          </div>
+          <div class="form-group">
+            <label>SMTP Username / Email</label>
+            <input type="text" id="setting-smtp-user" class="form-input" placeholder="your-email@gmail.com">
+          </div>
+          <div class="form-group">
+            <label>SMTP Password / App Password</label>
+            <input type="password" id="setting-smtp-pass" class="form-input" placeholder="••••••••••••••••">
+          </div>
+          <div class="form-group">
+            <label>Throttle Delay between emails (ms)</label>
+            <input type="number" id="setting-rate-limit" class="form-input" placeholder="600"
+              title="600ms = ~100 emails/min">
+          </div>
+          <div class="form-group">
+            <label>Send Test Email To (Optional)</label>
+            <input type="email" id="setting-test-recipient" class="form-input" placeholder="e.g. your-email@gmail.com">
+          </div>
+        </div>
+
+        <div class="smtp-test-actions">
+          <button type="button" class="btn btn-outline" id="btn-test-smtp">⚡ Test SMTP Connection</button>
+          <button type="button" class="btn btn-primary" id="btn-send-test-email">📧 Send Test Email</button>
+        </div>
+
+        <div id="smtp-test-feedback" class="smtp-feedback-box" style="display: none;"></div>
+
+        <div class="deliverability-tip-box"
+          style="margin-top: 15px; padding: 12px 16px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; font-size: 13px; color: #1e40af; line-height: 1.5;">
+          <strong>💡 Mail landing in Junk / Spam folder?</strong>
+          <ul style="margin: 6px 0 0 18px; padding: 0;">
+            <li><strong>Recipient 1-Click Fix:</strong> The recipient can right-click the email in Junk and click
+              <em>"Not Junk"</em> or <em>"Add sender to Safe Senders list"</em>. All future emails will land directly in
+              their Main Inbox.</li>
+            <li><strong>Corporate Domains (e.g. @nfl.co.in):</strong> Corporate enterprise gateways automatically flag
+              external emails with PDF attachments as Junk until the recipient marks the sender as trusted.</li>
+            <li><strong>Optimized Delivery:</strong> Lease Billing Application automatically builds plain-text
+              alternatives, reply-to routing, and standard priority headers to maximize inbox delivery.</li>
+          </ul>
+        </div>
+
+        <h5 class="section-title mt-4">Bulk Mail Receipts Directory</h5>
+        <div class="form-group">
+          <label>Receipts Directory Path (Bulk Mail PDFs)</label>
+          <input type="text" id="setting-bulk-mail-path" class="form-input" placeholder="D:\estate_bills">
+          <span class="text-xs text-muted" style="display:block; margin-top:4px;">Folder path where bulk rent receipt
+            PDFs are located (e.g. <code>D:\estate_bills</code>). Subfolders like <code>Aug-2026</code> are
+            automatically searched.</span>
+        </div>
+
+        <h5 class="section-title mt-4">Email Subject & Body Template</h5>
+        <div class="form-group">
+          <label>Email Subject</label>
+          <input type="text" id="setting-email-subject" class="form-input"
+            placeholder="Monthly Lease Rent Invoice - {{month}} (Unit: {{unit_number}})">
+        </div>
+        <div class="form-group">
+          <label>Email Body (HTML Supported) <span class="text-xs text-muted">Tokens: {{tenant_name}}, {{unit_number}},
+              {{month}}, {{amount}}, {{date}}</span></label>
+          <textarea id="setting-email-body" class="form-input" rows="5"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('settings-modal')">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-settings">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT & SEND EMAIL MODAL (Individual / Group with live preview and custom edit) -->
+  <div class="modal-overlay" id="edit-send-email-modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <div class="d-flex align-center gap-2">
+          <span style="font-size: 1.3rem;">✏️</span>
+          <div>
+            <h4 style="margin: 0;">Edit & Send Email</h4>
+            <p class="text-xs text-muted" style="margin: 0;">Customize the email subject, message text, and recipient before dispatching.</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('edit-send-email-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-mail-receipt-ids">
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Recipient Name</label>
+            <input type="text" id="edit-mail-recipient-name" class="form-input" readonly style="background: rgba(0,0,0,0.03);">
+          </div>
+          <div class="form-group">
+            <label>Recipient Email *</label>
+            <input type="email" id="edit-mail-recipient-email" class="form-input" placeholder="e.g. tenant@domain.com" required>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Email Subject *</label>
+            <input type="text" id="edit-mail-subject" class="form-input" placeholder="Monthly Lease Rent Invoice - {{month}} (Unit: {{unit_number}})" required>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <div class="d-flex justify-between align-center" style="margin-bottom: 6px;">
+              <label style="margin: 0;">Email Body (HTML / Text) *</label>
+              <div class="d-flex gap-1">
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoEditMail('{{tenant_name}}')">+ Name</button>
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoEditMail('{{unit_number}}')">+ Unit</button>
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoEditMail('{{amount}}')">+ Amount</button>
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoEditMail('{{month}}')">+ Month</button>
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoEditMail('{{date}}')">+ Date</button>
+              </div>
+            </div>
+            <textarea id="edit-mail-body" class="form-input" rows="7" style="font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5;"></textarea>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Attached Document(s)</label>
+            <div id="edit-mail-attachments-list" class="d-flex flex-wrap gap-2"></div>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="d-flex align-center gap-2" style="cursor: pointer; font-size: 0.88rem; font-weight: normal;">
+              <input type="checkbox" id="edit-mail-save-as-default">
+              <span>Also update this Subject & Body as the <strong>default template</strong> for all future emails</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="edit-mail-preview-box" style="margin-top: 10px; padding: 14px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; display: none;">
+          <div class="d-flex justify-between align-center" style="margin-bottom: 8px;">
+            <strong style="color: #1e40af; font-size: 0.85rem;">👁️ Live Preview (Rendered Email Envelope)</strong>
+          </div>
+          <div id="edit-mail-preview-render" style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; font-size: 0.9rem;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('edit-send-email-modal')">Cancel</button>
+        <button class="btn btn-outline" id="btn-toggle-edit-preview" onclick="toggleEditMailPreview()">👁️ Preview HTML</button>
+        <button class="btn btn-primary" id="btn-submit-edit-send" onclick="submitEditMailSend()">
+          🚀 Send Email Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEDICATED EMAIL TEMPLATE MODAL (Global template quick edit) -->
+  <div class="modal-overlay" id="email-template-modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <div class="d-flex align-center gap-2">
+          <span style="font-size: 1.3rem;">✉️</span>
+          <div>
+            <h4 style="margin: 0;">Edit Email Subject & Message Template</h4>
+            <p class="text-xs text-muted" style="margin: 0;">Configure the default message and subject dispatched with tenant rent invoices.</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('email-template-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Email Subject *</label>
+            <input type="text" id="tpl-email-subject" class="form-input" placeholder="Monthly Lease Rent Invoice - {{month}} (Unit: {{unit_number}})" required>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <div class="d-flex justify-between align-center" style="margin-bottom: 6px;">
+              <label style="margin: 0;">Email Body (HTML Supported) *</label>
+              <div class="d-flex gap-1">
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoTemplate('{{tenant_name}}')">+ Name</button>
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoTemplate('{{unit_number}}')">+ Unit</button>
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoTemplate('{{amount}}')">+ Amount</button>
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoTemplate('{{month}}')">+ Month</button>
+                <button type="button" class="btn btn-outline btn-xs" onclick="insertTokenIntoTemplate('{{date}}')">+ Date</button>
+              </div>
+            </div>
+            <textarea id="tpl-email-body" class="form-input" rows="8" style="font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5;"></textarea>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <div style="background: rgba(0,0,0,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted);">
+              <strong>💡 Available dynamic variables:</strong>
+              <div style="margin-top: 4px;">
+                <code>{{tenant_name}}</code> — Tenant/Party Name &bull;
+                <code>{{unit_number}}</code> — Flat / Unit Number &bull;
+                <code>{{month}}</code> — Invoice Month (e.g. Aug-2026) &bull;
+                <code>{{amount}}</code> — Invoice Amount (e.g. 5202.00) &bull;
+                <code>{{date}}</code> — Dispatch Date
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tpl-preview-box" style="margin-top: 10px; padding: 14px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; display: none;">
+          <div class="d-flex justify-between align-center" style="margin-bottom: 8px;">
+            <strong style="color: #1e40af; font-size: 0.85rem;">👁️ Live Sample Preview</strong>
+          </div>
+          <div id="tpl-preview-render" style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; font-size: 0.9rem;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('email-template-modal')">Cancel</button>
+        <button class="btn btn-outline" id="btn-tpl-toggle-preview" onclick="toggleTemplatePreview()">👁️ Preview HTML</button>
+        <button class="btn btn-primary" id="btn-save-tpl" onclick="saveEmailTemplateFromModal()">
+          💾 Save Template
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-content modal-sm">
+      <div class="modal-header">
+        <h4 id="confirm-modal-title">Confirm Action</h4>
+        <button class="modal-close-btn" onclick="closeConfirmModal(false)">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-modal-message" class="text-sm">Are you sure you want to proceed?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeConfirmModal(false)">Cancel</button>
+        <button class="btn btn-danger" id="confirm-modal-action-btn" onclick="closeConfirmModal(true)">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN LOGIN OVERLAY -->
+  <div class="login-overlay" id="login-overlay" style="display: flex;">
+    <div class="login-card">
+      <div class="login-header">
+        <img src="nfl_logo.png" alt="NFL Logo" class="login-logo-img">
+        <h2>National Fertilizers Limited</h2>
+        <p class="login-subtitle">Lease Billing Application • Secure Sign In</p>
+      </div>
+      <form id="login-form" class="login-form" onsubmit="return false;">
+        <div id="login-alert" class="login-alert" style="display: none;"></div>
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <div class="input-with-icon">
+            <span class="input-icon">👤</span>
+            <input type="text" id="login-username" class="form-input" placeholder="Enter username" required
+              autocomplete="username">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-with-icon">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="login-password" class="form-input" placeholder="Enter password" required
+              autocomplete="current-password">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-login-submit">
+          🔐 Sign In
+        </button>
+      </form>
+      <div class="login-footer text-center">
+        <p class="text-xs text-muted" style="text-align: center; margin-top: 5px;">🔒 Authorized National Fertilizers
+          Limited personnel only.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js?v=2.5"></script>
+</body>
+
+</html>
