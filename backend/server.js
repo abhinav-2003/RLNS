@@ -16,7 +16,7 @@ const PORT = parseInt(process.env.PORT, 10) || 5178;
 const HOST = process.env.HOST || '0.0.0.0';
 
 // Setup directories
-const UPLOADS_DIR = process.env.ESTATE_BILLS_DIR || 'D:\\estate_bills';
+const UPLOADS_DIR = process.env.ESTATE_BILLS_DIR || path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
